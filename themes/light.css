@@ -1,0 +1,62 @@
+window {
+    background: white; /* Białe tło okna */
+}
+
+/* Pola szachownicy */
+button.square0, button.square1 {
+    min-width: 100px;    /* Stała szerokość pola */
+    min-height: 100px;   /* Stała wysokość pola */
+    padding: 0;          /* Brak dodatkowych odstępów */
+    border-radius: 0;    /* Brak zaokrąglonych rogów */
+    border: 1px solid #145b32; /* Zielona ramka wokół pól */
+    transition: all 0.2s ease, filter 0.2s ease; /* Płynne przejścia dla tła i filtrów */
+
+}
+
+/* Kolory tła */
+button.square0 {
+    background: #2ecc71; /* Zielone pole */
+}
+
+button.square1 {
+    background: #f5f5dc; /* Kremowe pole */
+}
+
+/* Efekt hover - delikatne przyciemnienie (tint) bez nadpisywania tła */
+button.square0:hover, button.square1:hover {
+    filter: brightness(85%); /* Zmniejsza jasność tła */
+
+}
+
+/* Efekt active - mocniejsze przyciemnienie */
+button.square0:active, button.square1:active {
+    filter: brightness(70%); 
+}
+
+/* Efekt selected - zachowanie przyciemnienia jak po kliknięciu */
+button.square0.selected, button.square1.selected {
+    filter: brightness(70%);
+}
+
+/* Efekt checked - podświetlenie na czerwono */
+button.square0:checked, button.square1:checked {
+    background: #cd0000; /* Podświetlenie na czerwono */
+}
+
+/* Figury szachowe */
+button.square0 > .chess-piece-black,
+button.square1 > .chess-piece-black,
+button.square0 > .chess-piece-white,
+button.square1 > .chess-piece-white {
+    font-family: "Segoe UI Symbol"; /* Czcionka obsługująca symbole szachowe */
+    font-size: 70px;               /* Rozmiar czcionki */
+}
+
+/* Kolory figur */
+.chess-piece-black {
+    color: black; /* Czarny kolor dla czarnych figur */
+}
+
+.chess-piece-white {
+    color: white; /* Biały kolor dla białych figur */
+}

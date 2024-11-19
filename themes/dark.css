@@ -1,0 +1,60 @@
+window {
+    background: #212121; /* Ciemnoszare tło */
+}
+
+/* Pola szachownicy */
+button.square0, button.square1 {
+    min-width: 100px;
+    min-height: 100px;
+    padding: 0px;
+    border-radius: 0px;
+    border: 1px solid #05032b;
+    transition: all 0.2s ease, filter 0.2s ease; /* Płynne przejścia dla tła i filtrów */
+}
+
+/* Kolory tła */
+button.square0 {
+    background: #295d7f; /* Niebieskie pole */
+}
+button.square1 {
+    background: #a1bbcd; /* Jasne pole */
+}
+
+
+/* Efekt hover - delikatne przyciemnienie (tint) bez nadpisywania tła */
+button.square0:hover, button.square1:hover {
+    filter: brightness(85%); /* Zmniejsza jasność tła */
+
+}
+
+/* Efekt active - mocniejsze przyciemnienie */
+button.square0:active, button.square1:active {
+    filter: brightness(70%); 
+}
+
+/* Efekt selected - zachowanie przyciemnienia jak po kliknięciu */
+button.square0.selected, button.square1.selected {
+    filter: brightness(70%);
+}
+
+/* Efekt checked - podświetlenie na czerwono */
+button.square0:checked, button.square1:checked {
+    background: #720000; /* Podświetlenie na czerwono */
+}
+
+/* Figury szachowe */
+button.square0 > .chess-piece-black,
+button.square1 > .chess-piece-black,
+button.square0 > .chess-piece-white,
+button.square1 > .chess-piece-white {
+    font-family: "Segoe UI Symbol"; /* Czcionka obsługująca symbole szachowe */
+    font-size: 70px;
+}
+
+.chess-piece-black {
+    color: black; 
+}
+
+.chess-piece-white {
+    color: white; 
+}
