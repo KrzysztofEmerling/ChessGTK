@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
-#include "ui.h"
+#include "loop.h"
 #include "theme.h"
-#include "chess.h"
+#include "../chess/gameLoop.h"
 
 void activate(GtkApplication *app, gpointer user_data) 
 {
@@ -16,7 +16,9 @@ void activate(GtkApplication *app, gpointer user_data)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     gtk_window_set_child(GTK_WINDOW(window), vbox);
 
-    // Tworzenie siatki 8x8 wywendruje do startGame();
+    // Tworzenie siatki 8x8 wywendruje do 
+    
+    start_game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     board = draw_board();
     gtk_box_append(GTK_BOX(vbox), board);
 

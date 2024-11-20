@@ -1,12 +1,23 @@
 #include <gtk/gtk.h>
-#include "chess.h"
 
+#include "gameLoop.h"
 
 static GameData gameData;
 static SquareCords prev_selected = {-1, -1};
 static GameState current_state = WHITE_SELECTING_PIECE;
  
-
+void start_game(char *fen)
+{
+    parseFEN(fen, &gameData);
+    if(gameData.isWhiteTurn)
+    {
+        current_state = WHITE_SELECTING_PIECE;
+    }
+    else
+    {
+         current_state = BLACK_SELECTING_PIECE;
+    }
+}
 GtkWidget *draw_board(void) {
     GtkWidget *grid = gtk_grid_new();
 
@@ -38,7 +49,6 @@ GtkWidget *draw_board(void) {
 
     return grid;
 }
-
 
 void on_square_clicked(GtkButton *button, gpointer user_data) {
     GtkWidget *grid = gtk_widget_get_parent(GTK_WIDGET(button));
@@ -136,8 +146,6 @@ void remove_selection(GtkWidget *grid) {
     prev_selected.row = -1;
 }
 
-
-
 void move_piece(int index)
 {
     int p_index = prev_selected.row * 8 + prev_selected.col;
@@ -173,7 +181,6 @@ void draw_piece(GtkWidget *button, int piece) {
     }
 }
 
-
 void draw_pieces(GtkWidget *grid) {
     int index = 0;
     for (int row = 0; row < 8; row++) {
@@ -201,45 +208,6 @@ void draw_pieces(GtkWidget *grid) {
             }
 
             index++;
-        }
-    }
-}
-
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
-void parseFEN(const char *fen) {
-    int index = 0; // Indeks w tablicy 64-elementowej
-    for (int i = 0; fen[i] != '\0' && index < 64; i++) {
-        char c = fen[i];
-
-        if (isdigit(c)) {
-            // Puste pola: dodaj tyle zer, ile wynosi cyfra
-            int emptySpaces = c - '0';
-            for (int j = 0; j < emptySpaces; j++) {
-                gameData.chessPieces[index++] = 0;
-            }
-        } else if (c == '/') {
-            // Separator między rzędami - ignorujemy
-            continue;
-        } else {
-            // Figury
-            switch (c) {
-                case 'P': gameData.chessPieces[index++] = 1; break;
-                case 'N': gameData.chessPieces[index++] = 2; break;
-                case 'B': gameData.chessPieces[index++] = 3; break;
-                case 'R': gameData.chessPieces[index++] = 5; break;
-                case 'Q': gameData.chessPieces[index++] = 9; break;
-                case 'K': gameData.chessPieces[index++] = 100; break;
-                case 'p': gameData.chessPieces[index++] = -1; break;
-                case 'n': gameData.chessPieces[index++] = -2; break;
-                case 'b': gameData.chessPieces[index++] = -3; break;
-                case 'r': gameData.chessPieces[index++] = -5; break;
-                case 'q': gameData.chessPieces[index++] = -9; break;
-                case 'k': gameData.chessPieces[index++] = -100; break;
-                default: break; // Ignoruj nieznane znaki
-            }
         }
     }
 }

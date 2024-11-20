@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
-#include "ui.h"
-#include "theme.h"
-#include "chess.h"
+#include "app/loop.h"
+#include "app/theme.h"
+#include "chess/gameLoop.h"
 
 int main(int argc, char **argv) {
     GtkApplication *app;

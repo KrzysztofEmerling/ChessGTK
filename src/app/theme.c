@@ -1,5 +1,5 @@
 #include <gtk/gtk.h>
-#include <stdlib.h>  // Dla realpath
+#include <stdlib.h>  
 
 static GtkCssProvider *css_provider = NULL;
 
