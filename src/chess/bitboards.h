@@ -3,26 +3,9 @@
 
 #include <gtk/gtk.h>
 #include <stdio.h>
-#include <stdint.h>
 
-typedef union {
-    struct {
-        uint64_t WhitePawns;
-        uint64_t WhiteRooks;
-        uint64_t WhiteBishops;
-        uint64_t WhiteKnights;
-        uint64_t WhiteQueens;
-        uint64_t WhiteKing;
+#include "gamedata.h"
 
-        uint64_t BlackPawns;
-        uint64_t BlackRooks;
-        uint64_t BlackBishops;
-        uint64_t BlackKnights;
-        uint64_t BlackQueens;
-        uint64_t BlackKing;
-    };
-    uint64_t pieces[12]; // Tablica do indeksowania
-} BitBoard;
 
 static uint64_t IndexBitMasks[64] = {
     1ULL << 0,  1ULL << 1,  1ULL << 2,  1ULL << 3,  1ULL << 4,  1ULL << 5,  1ULL << 6,  1ULL << 7,
@@ -35,8 +18,14 @@ static uint64_t IndexBitMasks[64] = {
     1ULL << 56, 1ULL << 57, 1ULL << 58, 1ULL << 59, 1ULL << 60, 1ULL << 61, 1ULL << 62, 1ULL << 63
 };
 
+uint64_t get_index_mask(int index);
 
+void get_pieces_indices(uint64_t pieces, int *indices, size_t *count);
 
+int get_piece_type(const GameData *gameData, int index);
 
+bool is_white_piece(const GameData *gameData, int index);
+
+bool is_black_piece(const GameData *gameData, int index);
 
 #endif 

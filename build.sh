@@ -1,1 +1,1 @@
-gcc -o Chess src/main.c src/app/loop.c src/app/theme.c src/chess/gameLoop.c src/chess/FEN_Parser.c `pkg-config --cflags --libs gtk4`
+gcc -o Chess src/main.c src/app/loop.c src/app/theme.c src/chess/gamedata.h src/chess/bitboards.c src/chess/gameLoop.c src/chess/FEN_Parser.c `pkg-config --cflags --libs gtk4`

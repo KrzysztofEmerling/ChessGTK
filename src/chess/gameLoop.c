@@ -58,11 +58,12 @@ void on_square_clicked(GtkButton *button, gpointer user_data) {
     int col = coords->col;
     int index = row * 8 + col;
 
+
     switch (current_state)
     {
     case WHITE_SELECTING_PIECE:
         remove_selection(grid);
-        if(gameData.chessPieces[index] > 0)
+        if(is_white_piece(&gameData,index))
         {
             select_squere(grid, button, row, col);
             current_state = WHITE_MOVING_PIECE;
@@ -70,7 +71,7 @@ void on_square_clicked(GtkButton *button, gpointer user_data) {
         break;
 
     case WHITE_MOVING_PIECE:
-        if(gameData.chessPieces[index] <= 0)
+        if(!is_white_piece(&gameData,index))
         {
             move_piece(index);  
             draw_pieces(grid);   
@@ -86,7 +87,7 @@ void on_square_clicked(GtkButton *button, gpointer user_data) {
         break;
 
     case BLACK_SELECTING_PIECE:
-        if(gameData.chessPieces[index] < 0)
+        if(is_black_piece(&gameData,index))
         {
             select_squere(grid, button, row, col);
             current_state = BLACK_MOVING_PIECE;
@@ -98,7 +99,7 @@ void on_square_clicked(GtkButton *button, gpointer user_data) {
         break;
 
     case BLACK_MOVING_PIECE:
-        if(gameData.chessPieces[index] >= 0)
+        if(!is_white_piece(&gameData,index))
         {
             move_piece(index);  
             draw_pieces(grid);   
@@ -149,65 +150,84 @@ void remove_selection(GtkWidget *grid) {
 void move_piece(int index)
 {
     int p_index = prev_selected.row * 8 + prev_selected.col;
-    gameData.chessPieces[index] = gameData.chessPieces[p_index];
-    gameData.chessPieces[p_index] = 0;
+    int type = get_piece_type(&gameData, p_index);
+
+    uint64_t mask = ~get_index_mask(p_index);
+    gameData.chessPieces.pieces[type] &= mask;
+    mask = get_index_mask(index);
+    gameData.chessPieces.pieces[type] |= mask;
 }
 
 
-void draw_piece(GtkWidget *button, int piece) {
+void draw_piece(GtkWidget *button, char piece) {
     const char *chessSymbol = NULL;
-    bool blackPiece = piece < 0;
-    if (blackPiece) piece *= -1;
+    bool black_piece = false;
 
     switch (piece) {
-        case 1: chessSymbol = "♟"; break; // Pion
-        case 2: chessSymbol = "♞"; break; // Skoczek
-        case 3: chessSymbol = "♝"; break; // Goniec
-        case 5: chessSymbol = "♜"; break; // Wieża
-        case 9: chessSymbol = "♛"; break; // Królowa
-        case 100: chessSymbol = "♚"; break; // Król
-        default: chessSymbol = ""; break;
+        case 'P': chessSymbol = "♟"; break; 
+        case 'p':
+            chessSymbol = "♟"; 
+            black_piece = true;
+            break; 
+
+        case 'N': chessSymbol = "♞"; break; 
+        case 'n': chessSymbol = "♞";
+            black_piece = true;
+            break; 
+
+        case 'B': chessSymbol = "♝"; break; 
+        case 'b': chessSymbol = "♝";
+            black_piece = true;
+            break; 
+
+        case 'R': chessSymbol = "♜"; break; 
+        case 'r': chessSymbol = "♜"; 
+            black_piece = true;
+            break; 
+        case 'Q': chessSymbol = "♛"; break; 
+        case 'q': chessSymbol = "♛"; 
+            black_piece = true;
+            break;  
+
+        case 'K': chessSymbol = "♚"; break; 
+        case 'k': chessSymbol = "♚"; 
+            black_piece = true;
+            break; 
+
+        default: chessSymbol = " "; break;
     }
 
-    if (chessSymbol != NULL) {
+    if (chessSymbol != NULL) 
+    {
         GtkWidget *label = gtk_label_new(chessSymbol);
 
-        // Dodaj klasę CSS do etykiety
-        if(blackPiece) gtk_widget_add_css_class(label, "chess-piece-black");
+        if(black_piece) gtk_widget_add_css_class(label, "chess-piece-black");
         else gtk_widget_add_css_class(label, "chess-piece-white");
 
-        // Ustaw etykietę jako dziecko przycisku
         gtk_button_set_child(GTK_BUTTON(button), label);
     }
 }
 
-void draw_pieces(GtkWidget *grid) {
-    int index = 0;
-    for (int row = 0; row < 8; row++) {
-        for (int col = 0; col < 8; col++) {
+void draw_pieces(GtkWidget *grid) 
+{
+    static const char pieceSymbols[12] = {
+        'P', 'R', 'B', 'N', 'Q', 'K',  // Białe figury
+        'p', 'r', 'b', 'n', 'q', 'k'   // Czarne figury
+    };
+
+    int indices[64];
+    size_t count;
+    for(int i = 0; i < 12; i++)
+    {
+        get_pieces_indices(gameData.chessPieces.pieces[i], indices, &count);
+        for(size_t j = 0; j < count; j++)
+        {
+            int index = indices[j];
+            int col = index % 8;
+            int row = (index - col) / 8;
+
             GtkWidget *button = gtk_grid_get_child_at(GTK_GRID(grid), col, row);
-
-            // Jeśli przycisk istnieje
-            if (button != NULL && index < 64) 
-            {
-                if (gameData.chessPieces[index] == 0) 
-                {
-                    GtkWidget *child = gtk_button_get_child(GTK_BUTTON(button));
-                    if (child != NULL) 
-                    {
-                        if (GTK_IS_LABEL(child)) 
-                        {
-                            gtk_label_set_text(GTK_LABEL(child), " ");
-                        }
-                    }
-                } 
-                else 
-                {
-                    draw_piece(button, gameData.chessPieces[index]);
-                }
-            }
-
-            index++;
+            draw_piece(button, pieceSymbols[i]);
         }
     }
 }

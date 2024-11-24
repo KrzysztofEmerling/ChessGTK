@@ -3,6 +3,8 @@
 
 #include <gtk/gtk.h>
 #include "FEN_Parser.h"
+#include "bitboards.h"
+
 
 typedef struct {
     int row;
@@ -33,6 +35,7 @@ void select_squere(GtkWidget *grid, GtkButton *button, int row, int col);
 void remove_selection(GtkWidget *grid);
 void move_piece(int index);
 
-void draw_piece(GtkWidget *button, int piece);
+void draw_piece(GtkWidget *button, char piece);
 void draw_pieces(GtkWidget *grid);
+
 #endif

@@ -1,14 +1,13 @@
 #include <ctype.h>
-
 #include "FEN_Parser.h"
 
 
 void parseFEN(const char *fen, GameData *gamedata) {
     // Reset gamedata to default values
-    memset(gamedata->chessPieces, 0, sizeof(gamedata->chessPieces));
+    memset(gamedata->chessPieces.pieces, 0, sizeof(gamedata->chessPieces.pieces));
     memset(gamedata->castlingRights, false, sizeof(gamedata->castlingRights));
-    gamedata->isWhiteTurn = false;
-    gamedata->enPassant = -1; // -1 means no en passant
+    gamedata->isWhiteTurn = true;
+    gamedata->enPassant = 0; // 0 means no en passant
     gamedata->halfMoveClock = 0;
     gamedata->fullMoveNumber = 1;
 
@@ -23,25 +22,50 @@ void parseFEN(const char *fen, GameData *gamedata) {
             fen++;
         } else {
             char piece = *fen++;
-            int value = 0;
-
             switch (piece) {
-                case 'p': value = -1; break;
-                case 'n': value = -2; break;
-                case 'b': value = -3; break;
-                case 'r': value = -5; break;
-                case 'q': value = -9; break;
-                case 'k': value = -100; break;
-                case 'P': value = 1; break;
-                case 'N': value = 2; break;
-                case 'B': value = 3; break;
-                case 'R': value = 5; break;
-                case 'Q': value = 9; break;
-                case 'K': value = 100; break;
+                case 'P': 
+                    gamedata->chessPieces.WhitePawns += get_index_mask(boardIndex);
+                    break;
+                case 'p': 
+                    gamedata->chessPieces.BlackPawns += get_index_mask(boardIndex);
+                    break;
+
+                case 'N': 
+                    gamedata->chessPieces.WhiteKnights += get_index_mask(boardIndex);
+                    break;
+                case 'n':                     
+                    gamedata->chessPieces.BlackKnights += get_index_mask(boardIndex);
+                    break;
+
+                case 'B':              
+                    gamedata->chessPieces.WhiteBishops += get_index_mask(boardIndex);
+                    break;
+                case 'b': 
+                    gamedata->chessPieces.BlackBishops += get_index_mask(boardIndex);
+                    break;
+
+                case 'R':
+                    gamedata->chessPieces.WhiteRooks += get_index_mask(boardIndex);
+                    break;
+                case 'r': 
+                    gamedata->chessPieces.BlackRooks += get_index_mask(boardIndex);
+                    break;
+
+                case 'Q':
+                    gamedata->chessPieces.WhiteQueens += get_index_mask(boardIndex);
+                    break;
+                case 'q': 
+                    gamedata->chessPieces.BlackQueens += get_index_mask(boardIndex);
+                    break;
+
+                case 'K':
+                    gamedata->chessPieces.WhiteKing += get_index_mask(boardIndex);
+                    break;
+                case 'k':
+                    gamedata->chessPieces.BlackKing += get_index_mask(boardIndex);
+                    break;
             }
-            if (value != 0 && boardIndex < 64) {
-                gamedata->chessPieces[boardIndex++] = value;
-            }
+
         }
     }
 
@@ -94,49 +118,55 @@ void parseFEN(const char *fen, GameData *gamedata) {
 }
 
 void saveFEN(const GameData *gamedata, char *fen) {
-    int boardIndex = 0;
-    
-    // Zapisz układ figur na planszy
+    static const char pieceSymbols[12] = {
+        'P', 'R', 'B', 'N', 'Q', 'K',  // Białe figury
+        'p', 'r', 'b', 'n', 'q', 'k'   // Czarne figury
+    };
+
     for (int row = 0; row < 8; row++) {
         int emptyCount = 0;
+
         for (int col = 0; col < 8; col++) {
-            int piece = gamedata->chessPieces[boardIndex++];
-            if (piece == 0) {
+            int index = row * 8 + col; // Indeks pola
+            char pieceChar = 0;
+
+            // Szukamy figury na danym polu w bitboardach
+            for (int i = 0; i < 12; i++) {
+                if (gamedata->chessPieces.pieces[i] & get_index_mask(index)) {
+                    pieceChar = pieceSymbols[i];
+                    break; // Znaleziono figurę
+                }
+            }
+
+            if (pieceChar == 0) {
+                // Pole jest puste
                 emptyCount++;
             } else {
+                // Jeśli są puste pola, zapisz ich liczbę
                 if (emptyCount > 0) {
-                    *fen++ = '0' + emptyCount;  // Zapisz ilość pustych pól
+                    *fen++ = '0' + emptyCount;
                     emptyCount = 0;
                 }
                 // Zapisz figurę
-                switch (piece) {
-                    case -1: *fen++ = 'p'; break;
-                    case -2: *fen++ = 'n'; break;
-                    case -3: *fen++ = 'b'; break;
-                    case -5: *fen++ = 'r'; break;
-                    case -9: *fen++ = 'q'; break;
-                    case -100: *fen++ = 'k'; break;
-                    case 1: *fen++ = 'P'; break;
-                    case 2: *fen++ = 'N'; break;
-                    case 3: *fen++ = 'B'; break;
-                    case 5: *fen++ = 'R'; break;
-                    case 9: *fen++ = 'Q'; break;
-                    case 100: *fen++ = 'K'; break;
-                }
+                *fen++ = pieceChar;
             }
         }
+
+        // Jeśli na końcu wiersza są puste pola, zapisz ich liczbę
         if (emptyCount > 0) {
-            *fen++ = '0' + emptyCount;  // Zapisz ilość pustych pól
+            *fen++ = '0' + emptyCount;
         }
+
+        // Dodaj separator wierszy
         if (row < 7) {
-            *fen++ = '/';  // Rozdziel wiersze planszy
+            *fen++ = '/';
         }
     }
 
     // Zapisz turę
     *fen++ = ' ';
     *fen++ = gamedata->isWhiteTurn ? 'w' : 'b';
-    
+
     // Zapisz prawa do roszady
     *fen++ = ' ';
     bool hasCastlingRights = false;
@@ -148,7 +178,7 @@ void saveFEN(const GameData *gamedata, char *fen) {
 
     // Zapisz en passant
     *fen++ = ' ';
-    if (gamedata->enPassant == -1) {
+    if (gamedata->enPassant == 0) {
         *fen++ = '-';
     } else {
         int rank = gamedata->enPassant / 8;
