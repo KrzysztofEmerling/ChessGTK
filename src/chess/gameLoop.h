@@ -33,7 +33,13 @@ void on_square_clicked(GtkButton *button, gpointer user_data);
 
 void select_squere(GtkWidget *grid, GtkButton *button, int row, int col);
 void remove_selection(GtkWidget *grid);
-void move_piece(int index);
+
+
+void move_piece(GtkWidget *grid, int index);
+void capture_piece(GtkWidget *grid, int index);
+void en_passant(GtkWidget *grid, int index);
+void castle(GtkWidget *grid, int king_index, int rook_index);
+
 
 void draw_piece(GtkWidget *button, char piece);
 void draw_pieces(GtkWidget *grid);

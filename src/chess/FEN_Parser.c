@@ -16,56 +16,32 @@ void parseFEN(const char *fen, GameData *gamedata) {
     // Parse board setup
     while (*fen && boardIndex < 64) {
         if (*fen == '/') {
+            // Skip to the next rank
             fen++;
         } else if (isdigit(*fen)) {
+            // Skip empty squares
             boardIndex += *fen - '0';
             fen++;
         } else {
-            char piece = *fen++;
-            switch (piece) {
-                case 'P': 
-                    gamedata->chessPieces.WhitePawns += get_index_mask(boardIndex);
-                    break;
-                case 'p': 
-                    gamedata->chessPieces.BlackPawns += get_index_mask(boardIndex);
-                    break;
-
-                case 'N': 
-                    gamedata->chessPieces.WhiteKnights += get_index_mask(boardIndex);
-                    break;
-                case 'n':                     
-                    gamedata->chessPieces.BlackKnights += get_index_mask(boardIndex);
-                    break;
-
-                case 'B':              
-                    gamedata->chessPieces.WhiteBishops += get_index_mask(boardIndex);
-                    break;
-                case 'b': 
-                    gamedata->chessPieces.BlackBishops += get_index_mask(boardIndex);
-                    break;
-
-                case 'R':
-                    gamedata->chessPieces.WhiteRooks += get_index_mask(boardIndex);
-                    break;
-                case 'r': 
-                    gamedata->chessPieces.BlackRooks += get_index_mask(boardIndex);
-                    break;
-
-                case 'Q':
-                    gamedata->chessPieces.WhiteQueens += get_index_mask(boardIndex);
-                    break;
-                case 'q': 
-                    gamedata->chessPieces.BlackQueens += get_index_mask(boardIndex);
-                    break;
-
-                case 'K':
-                    gamedata->chessPieces.WhiteKing += get_index_mask(boardIndex);
-                    break;
-                case 'k':
-                    gamedata->chessPieces.BlackKing += get_index_mask(boardIndex);
-                    break;
+            // Add piece to the corresponding bitboard
+            uint64_t mask = get_index_mask(boardIndex);
+            switch (*fen) {
+                case 'P': gamedata->chessPieces.pieces[0] |= mask; break; // White Pawns
+                case 'N': gamedata->chessPieces.pieces[1] |= mask; break; // White Knights
+                case 'B': gamedata->chessPieces.pieces[2] |= mask; break; // White Bishops
+                case 'R': gamedata->chessPieces.pieces[3] |= mask; break; // White Rooks
+                case 'Q': gamedata->chessPieces.pieces[4] |= mask; break; // White Queens
+                case 'K': gamedata->chessPieces.pieces[5] |= mask; break; // White King
+                case 'p': gamedata->chessPieces.pieces[6] |= mask; break; // Black Pawns
+                case 'n': gamedata->chessPieces.pieces[7] |= mask; break; // Black Knights
+                case 'b': gamedata->chessPieces.pieces[8] |= mask; break; // Black Bishops
+                case 'r': gamedata->chessPieces.pieces[9] |= mask; break; // Black Rooks
+                case 'q': gamedata->chessPieces.pieces[10] |= mask; break; // Black Queens
+                case 'k': gamedata->chessPieces.pieces[11] |= mask; break; // Black King
+                default: break; // Invalid character, skip
             }
-
+            boardIndex++;
+            fen++;
         }
     }
 
@@ -81,10 +57,10 @@ void parseFEN(const char *fen, GameData *gamedata) {
         fen++;
         while (*fen != ' ' && *fen != '\0') {
             switch (*fen) {
-                case 'K': gamedata->castlingRights[0] = true; break;
-                case 'Q': gamedata->castlingRights[1] = true; break;
-                case 'k': gamedata->castlingRights[2] = true; break;
-                case 'q': gamedata->castlingRights[3] = true; break;
+                case 'K': gamedata->castlingRights[0] = true; break; // White King-side
+                case 'Q': gamedata->castlingRights[1] = true; break; // White Queen-side
+                case 'k': gamedata->castlingRights[2] = true; break; // Black King-side
+                case 'q': gamedata->castlingRights[3] = true; break; // Black Queen-side
             }
             fen++;
         }
@@ -118,10 +94,7 @@ void parseFEN(const char *fen, GameData *gamedata) {
 }
 
 void saveFEN(const GameData *gamedata, char *fen) {
-    static const char pieceSymbols[12] = {
-        'P', 'R', 'B', 'N', 'Q', 'K',  // Białe figury
-        'p', 'r', 'b', 'n', 'q', 'k'   // Czarne figury
-    };
+
 
     for (int row = 0; row < 8; row++) {
         int emptyCount = 0;
