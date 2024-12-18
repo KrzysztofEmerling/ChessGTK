@@ -24,18 +24,18 @@ button.square1 {
 
 /* Efekt hover - delikatne przyciemnienie (tint) bez nadpisywania tła */
 button.square0:hover, button.square1:hover {
-    filter: brightness(85%); /* Zmniejsza jasność tła */
+    filter: brightness(75%); /* Zmniejsza jasność tła */
 
 }
 
 /* Efekt active - mocniejsze przyciemnienie */
 button.square0:active, button.square1:active {
-    filter: brightness(70%); 
+    filter: brightness(60%); 
 }
 
 /* Efekt selected - zachowanie przyciemnienia jak po kliknięciu */
 button.square0.selected, button.square1.selected {
-    filter: brightness(70%);
+    filter: brightness(60%);
 }
 
 /* Efekt checked - podświetlenie na czerwono */
