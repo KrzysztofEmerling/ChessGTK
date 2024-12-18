@@ -1,15 +1,14 @@
 # ChessGTK
 
-**ChessGTK** to aplikacja szachowa napisana w języku C z wykorzystaniem biblioteki GTK4, zaprojektowana z myślą o użytkownikach systemu Linux. Celem projektu jest stworzenie interaktywnej gry w szachy z nowoczesnym interfejsem graficznym.
+**ChessGTK** is a chess application written in C using the GTK4 library, designed for Linux users. The project's goal is to create an interactive chess game with a modern graphical interface.
 
-## Wymagania
+## Requirements
 
-Aby uruchomić **ChessGTK** na systemie Linux, musisz mieć zainstalowane następujące zależności:
+To run **ChessGTK** on a Linux system, you need to have the following dependencies installed:
 
-- **GTK4**: Biblioteka GUI do tworzenia aplikacji graficznych.
-- **GCC**: Kompilator języka C.
+- **GTK4**: A GUI library for building graphical applications.
+- **GCC**: A C language compiler.
 
-Instalacja GTK4 (na systemach opartych na Debianie, np. Ubuntu):
+Installing GTK4 (on Debian-based systems like Ubuntu):
 ```bash
 sudo apt install libgtk-4-dev
-```
